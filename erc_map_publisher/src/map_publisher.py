@@ -6,6 +6,10 @@ import numpy as np
 import tf2_ros
 import tf.transformations
 
+
+# TODO PLS ADD SRV generator in CMAKE
+from map_publisher.srv import UpdateTransform
+
 from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
 
 
@@ -30,13 +34,18 @@ class MapBroadcaster:
         self.transform = self._identity_transform()
 
         # TODO
-        # self.update_transform_srv = rospy.Service("/update_transform", )
+        # self.update_transform_srv = rospy.Service("/update_transform", UpdateTransform)
 
     def publish_map(self):
         self.transform.header.stamp = rospy.Time.now()
         self.broadcaster.sendTransform(self.transform)
 
     def update_transform(self, map_base):
+        # ugly but should work xd
+        t = TransformStamped()
+        t.transform.translation = map_base.pose.pose.position
+        t.transform.rotation = map_base.pose.pose.orientation
+
         try:
             base_odom = self.tfBuffer.lookup_transform(self.base_frame,
                                                        self.odom_frame,
@@ -47,7 +56,7 @@ class MapBroadcaster:
                 tf2_ros.ExtrapolationException):
             return
 
-        self.transform = self.chain_transforms(map_base, base_odom)
+        self.transform = self.chain_transforms(t, base_odom)
 
     def _chain_transforms(self, map_base, base_odom):
         m1 = to_matrix(map_base)
