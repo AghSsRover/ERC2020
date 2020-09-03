@@ -44,6 +44,10 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <visualization_msgs/Marker.h>
 
+#include <erc_map_publisher/UpdateTransform.h>
+
+
+
 #include <boost/filesystem.hpp>
 
 static double systematic_error = 0.01;
@@ -83,9 +87,10 @@ Map::Map(ros::NodeHandle &nh) : tfBuffer(ros::Duration(30.0)) {
     fiducialToAdd = -1;
 
     listener = make_unique<tf2_ros::TransformListener>(tfBuffer);
-
-    robotPosePub =
-        ros::Publisher(nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/fiducial_pose", 1));
+    
+    ros::ServiceClient transformUpdator = nh.serviceClient<erc_map_publisher::UpdateTransform>("/update_transform");
+    // robotPosePub =
+    //     ros::Publisher(nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/fiducial_pose", 1));
     cameraPosePub = ros::Publisher(
         nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/fiducial_slam/camera_pose", 1));
 
@@ -362,7 +367,12 @@ int Map::updatePose(std::vector<Observation> &obs, const ros::Time &time,
 
     T_mapCam = T_mapBase * T_baseCam;
 
-    robotPosePub.publish(robotPose);
+    erc_map_broadcaster::UpdateTransform req;
+    req.request.pose = robotPose;
+
+    if (!transformUpdator.call(req)){
+         ROS_ERROR("Failed to call service /update_transform");
+    };
 
     // tf2::Stamped<TransformWithVariance> outPose = basePose;
     // outPose.frame_id_ = mapFrame;
