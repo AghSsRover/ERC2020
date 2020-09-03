@@ -367,7 +367,7 @@ int Map::updatePose(std::vector<Observation> &obs, const ros::Time &time,
 
     T_mapCam = T_mapBase * T_baseCam;
 
-    erc_map_broadcaster::UpdateTransform req;
+    erc_map_publisher::UpdateTransform req;
     req.request.pose = robotPose;
 
     if (!transformUpdator.call(req)){
