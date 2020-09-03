@@ -6,8 +6,6 @@ import numpy as np
 import tf2_ros
 import tf.transformations
 
-
-# TODO PLS ADD SRV generator in CMAKE
 from erc_map_publisher.srv import UpdateTransform
 
 from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
@@ -32,9 +30,11 @@ class MapBroadcaster:
         self.broadcaster = tf2_ros.TransformBroadcaster()
 
         self.transform = self._identity_transform()
+        self.update_transform_srv = rospy.Service("/update_map_odom_transform", UpdateTransform, self.update_map_odom_transform)
 
-        # TODO
-        # self.update_transform_srv = rospy.Service("/update_transform", UpdateTransform)
+    def update_map_odom_transform(self, req):
+        self.update_transform(req.pose)
+        return ["map -> odom transform updated", True]
 
     def publish_map(self):
         self.transform.header.stamp = rospy.Time.now()
@@ -58,6 +58,8 @@ class MapBroadcaster:
 
         self.transform = self.chain_transforms(t, base_odom)
 
+        return 
+
     def _chain_transforms(self, map_base, base_odom):
         m1 = to_matrix(map_base)
         m2 = to_matrix(base_odom)
@@ -75,7 +77,7 @@ class MapBroadcaster:
     def _identity_transform(self):
         t = TransformStamped()
         t.header.frame_id = self.map_frame
-        t.header.child_frame_id = self.odom_frame
+        t.child_frame_id = self.odom_frame
         t.transform.rotation.w = 1
 
         return t
