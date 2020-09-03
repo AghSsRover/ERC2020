@@ -8,7 +8,7 @@ import tf.transformations
 
 
 # TODO PLS ADD SRV generator in CMAKE
-from map_publisher.srv import UpdateTransform
+from erc_map_publisher.srv import UpdateTransform
 
 from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
 
