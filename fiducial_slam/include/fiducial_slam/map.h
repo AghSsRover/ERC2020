@@ -111,6 +111,9 @@ public:
     std::string odomFrame;
     std::string cameraFrame;
     std::string baseFrame;
+
+    ros::ServiceClient transformUpdater_;
+    
     double future_date_transforms;
     bool publish_6dof_pose;
     double multiErrorThreshold;

@@ -12,9 +12,10 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
 
 
 def to_matrix(transform):
-    t, r = transform.translation, transform.rotation
-    tm = tf.transformations.translation_matrix(t)
-    rm = tf.transformations.rotation_matrix(t)
+    t = transform.transform.translation
+    r = transform.transform.rotation
+    tm = tf.transformations.translation_matrix((t.x, t.y, t.z))
+    rm = tf.transformations.quaternion_matrix((r.x, r.y, r.z, r.w))
 
     return np.dot(tm, rm)
 
@@ -49,14 +50,15 @@ class MapBroadcaster:
         try:
             base_odom = self.tfBuffer.lookup_transform(self.base_frame,
                                                        self.odom_frame,
-                                                       rospy.Time().now())
+                                                       rospy.Duration(0))
 
         except (tf2_ros.LookupException,
                 tf2_ros.ConnectivityException,
                 tf2_ros.ExtrapolationException):
+            print("exception")
             return
 
-        self.transform = self.chain_transforms(t, base_odom)
+        self.transform = self._chain_transforms(t, base_odom)
 
         return 
 
@@ -64,14 +66,17 @@ class MapBroadcaster:
         m1 = to_matrix(map_base)
         m2 = to_matrix(base_odom)
         m = np.dot(m1, m2)
-
         t = tf.transformations.translation_from_matrix(m)
-        r = tf.transformations.rotation_from_matrix(m)
-
+        r = tf.transformations.quaternion_from_matrix(m)
         transform = self._identity_transform()
-        transform.transform.translation = t
-        transform.transform.rotation = r
+        transform.transform.translation.x = t[0]
+        transform.transform.translation.y = t[1]
+        transform.transform.translation.z = t[2]
 
+        transform.transform.rotation.x = r[0]
+        transform.transform.rotation.y = r[1]
+        transform.transform.rotation.z = r[2]
+        transform.transform.rotation.w = r[3]
         return transform
 
     def _identity_transform(self):
@@ -80,6 +85,7 @@ class MapBroadcaster:
         t.child_frame_id = self.odom_frame
         t.transform.rotation.w = 1
 
+
         return t
 
 
@@ -87,7 +93,7 @@ if __name__ == '__main__':
     rospy.init_node('map_broadcaster')
     broadcaster = MapBroadcaster()
 
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(20)
     while not rospy.is_shutdown():
         broadcaster.publish_map()
         rate.sleep()

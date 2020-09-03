@@ -88,7 +88,7 @@ Map::Map(ros::NodeHandle &nh) : tfBuffer(ros::Duration(30.0)) {
 
     listener = make_unique<tf2_ros::TransformListener>(tfBuffer);
     
-    ros::ServiceClient transformUpdator = nh.serviceClient<erc_map_publisher::UpdateTransform>("/update_transform");
+    transformUpdater_ = nh.serviceClient<erc_map_publisher::UpdateTransform>("/update_transform");
     // robotPosePub =
     //     ros::Publisher(nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/fiducial_pose", 1));
     cameraPosePub = ros::Publisher(
@@ -370,7 +370,7 @@ int Map::updatePose(std::vector<Observation> &obs, const ros::Time &time,
     erc_map_publisher::UpdateTransform req;
     req.request.pose = robotPose;
 
-    if (!transformUpdator.call(req)){
+    if (!transformUpdater_.call(req)){
          ROS_ERROR("Failed to call service /update_transform");
     };
 

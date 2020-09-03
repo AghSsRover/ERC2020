@@ -24,9 +24,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 )ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <launch>
-
-
   <arg name="perfect_odometry" default="false"/>
+
+  <node pkg="erc_map_publisher" type="map_publisher.py" name="map_transform_publisher" output="screen"/>
 
   <group if="$(arg perfect_odometry)">
     <node pkg="kalman_navigation" type="perfect_odometry_publisher.py" respawn="false" name="perfect_odometry_publisher" output="screen"/>
@@ -39,6 +39,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
   
   <!-- <remap from="/odom" to="/controllers/diff_drive/odom"/> -->
   <remap from="/odom" to="/odometry/filtered"/>
+
 
   <arg name="no_static_map" default="true"/>
   <arg name="base_global_planner" default="navfn/NavfnROS"/>
@@ -64,7 +65,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
     <rosparam file="$(find kalman_navigation)/config/costmap_global_static.yaml" command="load" ns="global_costmap" unless="$(arg no_static_map)"/>
     
     <!-- global costmap with laser, for odom_navigation_demo -->
-    <rosparam file="$(find kalman_navigation)/config/costmap_global_laser.yaml" command="load" ns="global_costmap" if="$(arg no_static_map)"/>
+    <!-- <rosparam file="$(find kalman_navigation)/config/costmap_global_laser.yaml" command="load" ns="global_costmap" if="$(arg no_static_map)"/> -->
     <param name="global_costmap/width" value="200.0" if="$(arg no_static_map)"/>
     <param name="global_costmap/height" value="200.0" if="$(arg no_static_map)"/>
   </node>
