@@ -38,7 +38,6 @@ class MapBroadcaster:
         return ["map -> odom transform updated", True]
 
     def publish_map(self):
-        self.transform.header.stamp = rospy.Time.now()
         self.broadcaster.sendTransform(self.transform)
 
     def update_transform(self, map_base):
@@ -55,16 +54,12 @@ class MapBroadcaster:
         except (tf2_ros.LookupException,
                 tf2_ros.ConnectivityException,
                 tf2_ros.ExtrapolationException):
-            print("exception")
+
             return
-
         self.transform = self._chain_transforms(t, base_odom)
-
         return 
 
     def _chain_transforms(self, map_base, base_odom):
-        print("map: ", map_base)
-        print("odom ", base_odom)
         m1 = to_matrix(map_base)
         m2 = to_matrix(base_odom)
         m = np.dot(m1, m2)
@@ -86,7 +81,6 @@ class MapBroadcaster:
         t.header.frame_id = self.map_frame
         t.child_frame_id = self.odom_frame
         t.transform.rotation.w = 1
-
 
         return t
 
