@@ -31,13 +31,15 @@ class MapBroadcaster:
         self.broadcaster = tf2_ros.TransformBroadcaster()
 
         self.transform = self._identity_transform()
-        self.update_transform_srv = rospy.Service("/update_map_odom_transform", UpdateTransform, self.update_map_odom_transform)
+        self.update_transform_srv = rospy.Service(
+            "/update_map_odom_transform", UpdateTransform, self.update_map_odom_transform)
 
     def update_map_odom_transform(self, req):
         self.update_transform(req.pose)
         return ["map -> odom transform updated", True]
 
     def publish_map(self):
+        self.transform.header.stamp = rospy.Time.now()
         self.broadcaster.sendTransform(self.transform)
 
     def update_transform(self, map_base):
@@ -57,7 +59,7 @@ class MapBroadcaster:
 
             return
         self.transform = self._chain_transforms(t, base_odom)
-        return 
+        return
 
     def _chain_transforms(self, map_base, base_odom):
         m1 = to_matrix(map_base)
