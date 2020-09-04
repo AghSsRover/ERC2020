@@ -6,7 +6,11 @@
 	<arg name="max_track_error" default="0.2" />
 	<arg name="cam_image_topic" default="/camera/image_raw" />
 	<arg name="cam_info_topic" default="/camera/camera_info" />
+<<<<<<< HEAD
 	<arg name="output_frame" default="zed2_right_camera_optical_frame" />
+=======
+	<arg name="output_frame" default="odom" />
+>>>>>>> 822f96c46309f0d7a483949c95b76b78f6bc3d1b
 
 	<node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen">
 		<param name="marker_size"           type="double" value="$(arg marker_size)" />

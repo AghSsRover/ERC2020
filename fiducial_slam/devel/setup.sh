@@ -1,0 +1,1 @@
+/home/kamil/code/space_systems/erc_ws/src/fiducial_slam/devel/.private/catkin_tools_prebuild/setup.sh

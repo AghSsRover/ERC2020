@@ -51,24 +51,25 @@ if __name__ == '__main__':
 
     qr_tag_bridge = ARTagsTransformer()
 
-    rate = rospy.Rate(0.5)
-    while not rospy.is_shutdown():
-        ar_tag_msg = AlvarMarkers()
-        marker = AlvarMarker()
+    rospy.spin()
 
-        marker.confidence = 0.8
-        marker.id = 0
-        marker.pose.pose.position.x = 2.0
-        marker.pose.pose.position.y = 1.0
-        marker.pose.pose.position.z = 1.0
-        marker.pose.pose.orientation.x = 0.0
-        marker.pose.pose.orientation.y = 0.0
-        marker.pose.pose.orientation.z = 0.0
-        marker.pose.pose.orientation.w = 1.0
-        ar_tag_msg.markers.append(marker)
-        print("calling")
-        rospy.Publisher("/ar_pose_marker", AlvarMarkers,
-                        queue_size=1).publish(ar_tag_msg)
-        # qr_tag_bridge.ar_tag_callback(ar_tag_msg)
+    # rate = rospy.Rate(0.5)
+    # while not rospy.is_shutdown():
+    #     ar_tag_msg = AlvarMarkers()
+    #     marker = AlvarMarker()
+    #     marker.confidence = 0.8
+    #     marker.id = 0
+    #     marker.pose.pose.position.x = 2.0
+    #     marker.pose.pose.position.y = 1.0
+    #     marker.pose.pose.position.z = 1.0
+    #     marker.pose.pose.orientation.x = 0.0
+    #     marker.pose.pose.orientation.y = 0.0
+    #     marker.pose.pose.orientation.z = 0.0
+    #     marker.pose.pose.orientation.w = 1.0
+    #     ar_tag_msg.markers.append(marker)
+    #     print("calling")
+    #     rospy.Publisher("/ar_pose_marker", AlvarMarkers,
+    #                     queue_size=1).publish(ar_tag_msg)
+    #     # qr_tag_bridge.ar_tag_callback(ar_tag_msg)
 
-        rate.sleep()
+    #     rate.sleep()

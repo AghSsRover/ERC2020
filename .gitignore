@@ -1,1 +1,6 @@
+<<<<<<< HEAD
 .vscode/
+=======
+.vscode*
+*.pyc
+>>>>>>> 822f96c46309f0d7a483949c95b76b78f6bc3d1b

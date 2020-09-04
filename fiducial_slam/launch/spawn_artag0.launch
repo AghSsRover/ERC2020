@@ -1,0 +1,26 @@
+<launch>
+
+    <arg name="object_x" default="2.0"/>
+    <arg name="object_y" default="0.0"/>
+    <arg name="object_z" default="2.0"/>
+    <arg name="object_roll" default="0.0"/>
+    <arg name="object_pitch" default="0.0"/>
+    <arg name="object_yaw" default="0.0"/>
+    <arg name="id" default="00" />
+
+    <param
+        name="artag_0_description"
+        command="$(find xacro)/xacro $(find fiducial_slam)/models/artag_0/model/artag_0.xacro" />
+
+    <node
+        name="$(anon spawn_urdf)"
+        pkg="gazebo_ros"
+        type="spawn_model"
+        required="false"
+        args="-param artag_0_description -urdf -model artag_0_$(arg id) 
+              -x $(arg object_x) -y $(arg object_y) -z $(arg object_z)
+              -R $(arg object_roll) -P $(arg object_pitch) -Y $(arg object_yaw)" 
+        
+    />
+
+</launch>

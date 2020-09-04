@@ -1,0 +1,6 @@
+devel_space: /home/kamil/code/space_systems/erc_ws/src/fiducial_slam/devel
+install: false
+install_space: /home/kamil/code/space_systems/erc_ws/src/fiducial_slam/install
+profile: default
+source_space: /home/kamil/code/space_systems/erc_ws/src/fiducial_slam/src
+workspace: /home/kamil/code/space_systems/erc_ws/src/fiducial_slam
