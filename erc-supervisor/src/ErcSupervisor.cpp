@@ -29,7 +29,12 @@ namespace erc
 
         std::string move_base_action = pnh.param("move_base_action", std::string{"move_base"});
         move_base_client_ = std::make_unique<actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction>>(move_base_action, true);
-
+       
+        while (!move_base_client_->waitForServer(ros::Duration(5.0)))
+        {
+            ROS_INFO("Waiting for the move_base action server to come up");
+        }
+        
         update_pose_sub_ = pnh.subscribe("new_pose", 1, static_cast<UpdatePoseSubCb>(&ErcSupervisor::ArTagDetected), this);
         
         update_pose_client_ = pnh.serviceClient<std_srvs::Empty>("update_pose");
