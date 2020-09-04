@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="artag_0">
+
+  <link name="tennis_ball_base_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://fiducial_slam/models/artag_0/mesh/artag_0.dae" scale="0.2 0.2 0.2"/>
+            </geometry>
+        </visual>
+
+        <collision>
+            <geometry>
+                <mesh filename="package://fiducial_slam/models/artag_0/mesh/artag_0.dae" scale="0.2 0.2 0.2"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value=".01"/>
+            <inertia ixx=".00003" ixy="0.000" ixz="0.000" iyy=".00003" iyz="0.000" izz=".00003"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="tennis_ball_base_link">
+        <mu1> 1 </mu1>
+        <mu2> 1 </mu2>
+        <kp> 1160000 </kp>
+        <kd> 1000 </kd>
+        <selfCollide>False</selfCollide>
+    </gazebo>
+    
+    <gazebo>
+        <static> true </static>
+    </gazebo>
+
+</robot>

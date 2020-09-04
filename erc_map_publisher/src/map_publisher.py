@@ -63,6 +63,8 @@ class MapBroadcaster:
         return 
 
     def _chain_transforms(self, map_base, base_odom):
+        print("map: ", map_base)
+        print("odom ", base_odom)
         m1 = to_matrix(map_base)
         m2 = to_matrix(base_odom)
         m = np.dot(m1, m2)

@@ -88,7 +88,7 @@ Map::Map(ros::NodeHandle &nh) : tfBuffer(ros::Duration(30.0)) {
 
     listener = make_unique<tf2_ros::TransformListener>(tfBuffer);
     
-    transformUpdater_ = nh.serviceClient<erc_map_publisher::UpdateTransform>("/update_transform");
+    transformUpdater_ = nh.serviceClient<erc_map_publisher::UpdateTransform>("/update_map_odom_transform");
     // robotPosePub =
     //     ros::Publisher(nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/fiducial_pose", 1));
     cameraPosePub = ros::Publisher(

@@ -28,6 +28,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
   <node pkg="erc_map_publisher" type="map_publisher.py" name="map_transform_publisher" output="screen"/>
 
+  <include file="$(find fiducial_slam)/launch/fiducial_slam.launch"/>  
+
+
   <group if="$(arg perfect_odometry)">
     <node pkg="kalman_navigation" type="perfect_odometry_publisher.py" respawn="false" name="perfect_odometry_publisher" output="screen"/>
     <include file="$(find kalman_navigation)/launch/localization_perfect.launch"/>
