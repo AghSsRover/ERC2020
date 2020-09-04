@@ -203,6 +203,7 @@ void Map::updateMap(const std::vector<Observation> &obs, const ros::Time &time,
                      trans.z(), o.T_camFid.variance, T_mapFid.variance);
 
             if (std::isnan(trans.x()) || std::isnan(trans.y()) || std::isnan(trans.z())) {
+                std::cout << "here" << std::endl;
                 ROS_WARN("Skipping NAN estimate\n");
                 continue;
             };
@@ -294,6 +295,8 @@ int Map::updatePose(std::vector<Observation> &obs, const ros::Time &time,
             tf2::Stamped<TransformWithVariance> fiducial_pose;
 
             fiducial_pose = fid.pose;
+            
+            ROS_INFO("Pose %d %lf ", o.fid, fiducial_pose.transform.getOrigin()[0]);
             // we assume that orientation from odom to base is without any error
             fiducial_pose.transform.setRotation((T_odomBase * T_baseCam * o.T_camFid).transform.getRotation());
 
@@ -324,6 +327,7 @@ int Map::updatePose(std::vector<Observation> &obs, const ros::Time &time,
             // drawLine(fid.pose.getOrigin(), o.position);
 
             if (std::isnan(position.x()) || std::isnan(position.y()) || std::isnan(position.z())) {
+                std::cout << "here 2 " << std::endl;
                 ROS_WARN("Skipping NAN estimate\n");
                 continue;
             };

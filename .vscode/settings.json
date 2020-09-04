@@ -3,5 +3,10 @@
         "/home/machon/code/space_systems/realsense_ws/devel/lib/python2.7/dist-packages",
         "/home/machon/code/space_systems/kalman_sim/devel/lib/python2.7/dist-packages",
         "/opt/ros/melodic/lib/python2.7/dist-packages"
-    ]
+    ],
+    "files.associations": {
+        "string_view": "cpp",
+        "*.tcc": "cpp",
+        "*.cuh": "cpp"
+    }
 }
