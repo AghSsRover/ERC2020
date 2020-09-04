@@ -30,14 +30,15 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
   <include file="$(find fiducial_slam)/launch/fiducial_slam.launch"/>  
 
-
   <group if="$(arg perfect_odometry)">
     <node pkg="kalman_navigation" type="perfect_odometry_publisher.py" respawn="false" name="perfect_odometry_publisher" output="screen"/>
     <include file="$(find kalman_navigation)/launch/localization_perfect.launch"/>
   </group>
 
+
   <group unless="$(arg perfect_odometry)">
-    <include file="$(find kalman_navigation)/launch/localization.launch"/>
+    <node pkg="kalman_navigation" type="perfect_odometry_publisher.py" respawn="false" name="perfect_odometry_publisher" output="screen"/>
+    <include file="$(find kalman_navigation)/launch/localization_zed.launch"/>
   </group>
   
   <!-- <remap from="/odom" to="/controllers/diff_drive/odom"/> -->
