@@ -35,9 +35,9 @@ namespace erc
             ROS_INFO("Waiting for the move_base action server to come up");
         }
         
-        update_pose_sub_ = pnh.subscribe("new_pose", 1, static_cast<UpdatePoseSubCb>(&ErcSupervisor::ArTagDetected), this);
+        update_pose_sub_ = pnh.subscribe("/new_pose", 1, static_cast<UpdatePoseSubCb>(&ErcSupervisor::ArTagDetected), this);
         
-        update_pose_client_ = pnh.serviceClient<std_srvs::Empty>("update_pose");
+        update_pose_client_ = pnh.serviceClient<std_srvs::Empty>("/update_pose");
 
         map_frame_ = pnh.param("map_frame", std::string{"map"});
 
