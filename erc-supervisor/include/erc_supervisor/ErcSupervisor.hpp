@@ -15,9 +15,10 @@
 #include <geometry_msgs/PoseStamped.h>
 // #include <actionlib_msgs/GoalID.h>
 #include <std_msgs/UInt8.h>
+#include <std_msgs/UInt16.h>
 #include <std_msgs/Bool.h>
 #include <memory>
-
+#include <chrono>
 namespace erc
 {
 
@@ -124,10 +125,19 @@ namespace erc
         void SetStatus(const std_msgs::UInt8ConstPtr& msg);
 
         /**
+         * @brief Callback for settings time threshold for detection.
+         * 
+         * @param msg 
+         */
+
+        void SetDetectionThreshold(const std_msgs::UInt16ConstPtr& msg);
+
+        /**
          * @brief Callback for AR Tag detection signal.
          * 
          * @param msg 
          */
+
         void ArTagDetected(const std_msgs::Bool& msg);
 
         /**
@@ -167,6 +177,12 @@ namespace erc
         ros::Subscriber update_pose_sub_;
          
         /**
+         * @brief Subscribes threshold for Ar Tag detection.
+         */
+
+        ros::Subscriber update_threshold_sub_;
+         
+        /**
          * @brief Publishes the supervisor's current status as an uint8.
          */
         ros::Publisher status_pub_;
@@ -181,11 +197,19 @@ namespace erc
          */
         ros::Publisher current_goal_pub_;
 
+         /**
+         * @brief Publishes the supervisor's currently detection threshold/
+         */
+        ros::Publisher current_detection_thrshold_;
+
 
         std::string map_frame_;
 
         std::unique_ptr<tf2_ros::Buffer> buffer_;
         std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
+
+        std::chrono::time_point<std::chrono::steady_clock> last_detection_point_;
+        uint16_t detection_threshold_ = 15; // in seconds
         // tf2_ros::Buffer buffer_;
         // tf2_ros::TransformListener tf_listener_;
 

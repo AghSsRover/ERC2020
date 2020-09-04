@@ -11,6 +11,7 @@ namespace erc
     typedef void (ErcSupervisor::*CurrentGoalCb)(const geometry_msgs::PoseStamped &);
 
     typedef void (ErcSupervisor::*StatusCb)(const std_msgs::UInt8ConstPtr &);
+    typedef void (ErcSupervisor::*UpdateDetectionThresholdCb)(const std_msgs::UInt16ConstPtr &);
 
     typedef void (ErcSupervisor::*UpdatePoseSubCb)(const std_msgs::Bool &);
 
@@ -36,6 +37,7 @@ namespace erc
         }
         
         update_pose_sub_ = pnh.subscribe("/new_pose", 1, static_cast<UpdatePoseSubCb>(&ErcSupervisor::ArTagDetected), this);
+        update_threshold_sub_ = pnh.subscribe("/new_threshold", 1, static_cast<UpdateDetectionThresholdCb>(&ErcSupervisor::SetDetectionThreshold), this);
         
         update_pose_client_ = pnh.serviceClient<std_srvs::Empty>("/update_pose");
 
@@ -49,7 +51,9 @@ namespace erc
         status_pub_ = pnh.advertise<std_msgs::UInt8>("current_status", 10);
 
         current_goal_pub_ = pnh.advertise<geometry_msgs::PoseStamped>("current_goal", 1, true);
+        current_detection_thrshold_ = pnh.advertise<std_msgs::UInt16>("current_detecion_threshold",1,true);
 
+        last_detection_point_ = std::chrono::steady_clock::now(); // init
         ROS_INFO_STREAM("Can transform: " << buffer_->canTransform("base_link", map_frame_, ros::Time(0)));
     }
 
@@ -62,13 +66,33 @@ namespace erc
     
     void ErcSupervisor::ArTagDetected(const std_msgs::Bool& msg)
     {
-        if(msg.data)
+        
+        if(msg.data )
         {
-            SetStatus(Status::Pause);
-            std_srvs::Empty request;
-            update_pose_client_.call(request);
-            SetStatus(Status::Go);
+            auto new_detection_point = std::chrono::steady_clock::now();
+            auto time_diff = std::chrono::duration_cast<std::chrono::seconds>(new_detection_point - last_detection_point_).count();
+
+            if(time_diff >= detection_threshold_)
+            {
+                SetStatus(Status::Pause);
+                ROS_INFO_STREAM("Valid detection, Stop!");
+                std_srvs::Empty request;
+                update_pose_client_.call(request);
+                SetStatus(Status::Go);
+                ROS_INFO_STREAM("Valid detection, Go!");
+                last_detection_point_ = std::chrono::steady_clock::now();
+                ROS_INFO_STREAM("Valid detectiob, Update!");
+            }
+            else
+            {
+                ROS_INFO_STREAM("Time elapsed since last detection less than threshold");
+            } 
         }
+    }
+
+    void ErcSupervisor::SetDetectionThreshold(const std_msgs::UInt16ConstPtr& msg)
+    {
+        detection_threshold_ = msg->data;
     }
 
     void ErcSupervisor::CurrentGoal(const geometry_msgs::PoseStamped &msg)
@@ -176,6 +200,9 @@ namespace erc
         std_msgs::UInt8 msg;
         msg.data = static_cast<uint8_t>(status_);
         status_pub_.publish(msg);
+        std_msgs::UInt8 threshold_msg; 
+        threshold_msg.data = detection_threshold_;
+        current_goal_pub_.publish(threshold_msg);
 
         // switch (move_base_status.state_)
         // {
