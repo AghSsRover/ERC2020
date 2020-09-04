@@ -2,6 +2,8 @@
 
 
 import rospy
+import yaml 
+import rospkg
 
 from std_msgs.msg import Header
 from ar_track_alvar_msgs.msg import AlvarMarkers
@@ -18,14 +20,29 @@ class ARTagsTransformer():
         self.fiducial_slam_marker_publisher = rospy.Publisher(
             "/fiducial_transforms", FiducialTransformArray, queue_size=10)
 
+
+        self.config = None
+        rospack = rospkg.RosPack()
+        with open(rospack.get_path('fiducial_slam') +  "/cfg/legal_labels.yaml", 'r') as stream:
+            try:
+                self.config = yaml.safe_load(stream)["legal_labels"]
+            except yaml.YAMLError as exc:
+                print(exc)
+
+    def marker_id_ok(self, marker):
+        print(marker.id)
+        print(self.config)
+        if marker.id is not None and marker.id in self.config:
+            return True
+        else:
+            return False
+
     def ar_tag_callback(self, ar_message):
 
-        # TODO, maybe read IDs from ~/.ros/slam/map.txt file, or set is as param
-        def marker_id_ok(marker):
-            return True
+
 
         for marker in ar_message.markers:
-            if not marker_id_ok(marker):
+            if not self.marker_id_ok(marker):
                 continue
 
             ficudial_array = FiducialTransformArray()
@@ -41,9 +58,8 @@ class ARTagsTransformer():
             ficudial_array.header = marker.header
             ficudial_array.transforms.append(ficudial_msg)
 
-        print(ficudial_array)
 
-        self.fiducial_slam_marker_publisher.publish(ficudial_array)
+            self.fiducial_slam_marker_publisher.publish(ficudial_array)
 
 
 if __name__ == '__main__':
