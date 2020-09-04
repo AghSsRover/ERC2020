@@ -1,0 +1,18 @@
+# Topic to listen to for goal commands.
+# If you remap /move_base_simple/goal to this, the RViz '2D Nav Goal' button should work.
+# (Make sure to remap it away in move_base launch, to prevent move_base from picking it up as well)
+goal_sub_topic: goal
+
+# Where to look for move_base topics.
+# By default, this will assume:
+# /launch_namespace/move_base/goal
+# /launch_namespace/move_base/status
+# /launch_namespace/move_base/feedback
+# /launch_namespace/move_base/result
+move_base_action: move_base
+
+# All goal will be transformed to this frame.
+# This should be the map's frame.
+# This way, if a goal is paused and resumed later,
+# it does not move with the robot.
+map_frame: map
