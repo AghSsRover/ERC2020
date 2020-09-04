@@ -22,8 +22,8 @@ class ARTagsTransformer():
         
         ficudial_msg = FiducialTransform()
         ficudial_msg.fiducial_id = ar_message.markers[0].id
-        ficudial_msg.image_error = ar_message.markers[0].confidence
-        ficudial_msg.object_error = 0.01  #TODO: ????
+        ficudial_msg.image_error = 0.01  #TODO: ????
+        ficudial_msg.object_error = ar_message.markers[0].confidence
         ficudial_msg.fiducial_area = 0.2 #TODO: ???
         ficudial_msg.transform.rotation = ar_message.markers[0].pose.pose.orientation
         ficudial_msg.transform.translation = ar_message.markers[0].pose.pose.position
@@ -51,7 +51,7 @@ if __name__ == '__main__':
         marker.id = 0
         marker.pose.pose.position.x = 2.0
         marker.pose.pose.position.y = 1.0
-        marker.pose.pose.position.y = 1.0
+        marker.pose.pose.position.z = 1.0
         marker.pose.pose.orientation.x = 0.0
         marker.pose.pose.orientation.y = 0.0
         marker.pose.pose.orientation.z = 0.0
