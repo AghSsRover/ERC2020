@@ -27,6 +27,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
   <arg name="perfect_odometry" default="false"/>
 
   <node pkg="erc_map_publisher" type="map_publisher.py" name="map_transform_publisher" output="screen"/>
+  <node pkg="fiducial_slam" type="ar_tag_fiducial_transform.py" name="ar_tag_bridge" output="screen"/>
 
   <include file="$(find fiducial_slam)/launch/fiducial_slam.launch"/>  
 
