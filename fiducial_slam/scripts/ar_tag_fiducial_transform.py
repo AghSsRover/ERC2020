@@ -49,7 +49,10 @@ class ARTagsTransformer():
 
     def ar_tag_callback(self, ar_message):
         self.last_ar_message = ar_message
-        if len(ar_message.markers) > 0:
+        markers = [marker for marker in ar_message.markers
+                   if self.marker_id_ok(marker)]
+
+        if len(markers) > 0:
             self.detection_available_publisher.publish(Bool(True))
 
     def update_pose_handle(self, req):
