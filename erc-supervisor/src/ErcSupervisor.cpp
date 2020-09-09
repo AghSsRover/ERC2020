@@ -73,15 +73,20 @@ namespace erc
             ROS_WARN_STREAM("received pose");
             if (time_diff >= detection_threshold_)
             {
+                // TODO check diff from goal and update status if distance is big
+                Status current_status = status_;
+
                 ROS_ERROR_STREAM("updating pose");
                 SetStatus(Status::Pause);
-                ROS_INFO_STREAM("Valid detection, Stop!");
+                ROS_INFO("Valid detection, Stop!");
                 std_srvs::Empty request;
                 update_pose_client_.call(request);
-                SetStatus(Status::Go);
-                ROS_INFO_STREAM("Valid detection, Go!");
+                
+                // TODO check diff from goal and update status if distance is big
+                SetStatus(current_status);
+                ROS_INFO("Valid detection, Go!");
                 last_detection_point_ = std::chrono::steady_clock::now();
-                ROS_INFO_STREAM("Valid detectiob, Update!");
+                ROS_INFO("Valid detectiob, Update!");
             }
             else
             {
@@ -89,7 +94,6 @@ namespace erc
             }
         }
     }
-
     void ErcSupervisor::SetDetectionThreshold(const std_msgs::UInt16ConstPtr &msg)
     {
         detection_threshold_ = msg->data;
@@ -152,25 +156,33 @@ namespace erc
     {
         if (new_status == status_)
         {
+            ROS_INFO("new status %d is the same as current", new_status);
             return;
         }
 
         switch (new_status)
         {
         case Status::Go:
-            ROS_INFO_STREAM("\'Go\' status received, sending move_base goal.");
+            ROS_INFO("Go status received, sending move_base goal.");
             StartGoal();
+            status_ = new_status;
             break;
         case Status::Pause:
-            ROS_INFO_STREAM("\'Pause\' status received, cancelling move_base goal, but leaving goal unchanged for resumption.");
+            ROS_INFO("Pause status received, cancelling move_base goal, but leaving goal unchanged for resumption.");
             PauseGoal();
+            status_ = new_status;
             break;
         case Status::Reset:
-            ROS_INFO_STREAM("\'Reset\' status received, cancelling move_base goal, and resetting goal to current base_link pose.");
+            ROS_INFO("Reset status received, cancelling move_base goal, and resetting goal to current base_link pose.");
             Reset();
+            status_ = new_status;
+            break;
+        
+        // TODO remove it
+        case Status::Idle:
+            status_ = new_status;
             break;
         default:
-            ROS_INFO_STREAM("Unsupported status \'" << static_cast<int>(new_status) << "\' received.");
             break;
         }
     }
@@ -178,24 +190,37 @@ namespace erc
     void ErcSupervisor::SetStatus(const std_msgs::UInt8ConstPtr &msg)
     {
         Status new_status = static_cast<Status>(msg->data);
-
+        ROS_INFO("SetStatus %d", new_status);
         SetStatus(new_status);
     }
 
     void ErcSupervisor::Update()
     {
         auto move_base_status = move_base_client_->getState();
-        Status new_status;
+        
+        // Status new_status;
+        // if (move_base_status.isDone() && status_ != Status::Pause)
+        // {
+        //     status_ = Status::Idle;
+        // }
+        // else if (status_ != Status::Pause
+        // {
+        //     status_ = Status::Go;
+        // }
 
-        if (move_base_status.isDone())
-        {
-            status_ = Status::Idle;
+        //TODO rethink it
+        if (status_ == Status::Go){
+            switch (move_base_status.state_)
+            {
+                case move_base_status.ACTIVE:
+                case move_base_status.PENDING:
+                    SetStatus(Status::Go);
+                    break;
+                case move_base_status.SUCCEEDED:
+                    SetStatus(Status::Idle);
+                    break;
+            }
         }
-        else
-        {
-            status_ = Status::Go;
-        }
-
         current_goal_pub_.publish(current_goal_);
         std_msgs::UInt8 msg;
         msg.data = static_cast<uint8_t>(status_);
@@ -203,23 +228,6 @@ namespace erc
         std_msgs::UInt8 threshold_msg;
         threshold_msg.data = detection_threshold_;
         current_detection_threshold_.publish(threshold_msg);
-
-        // switch (move_base_status.state_)
-        // {
-        //     case move_base_status.ACTIVE:
-        //     case move_base_status.PENDING:
-        //         new_status = Status::Go;
-        //         break;
-        //     case move_base_status.PREEMPTED:
-        //     case move_base_status.RECALLED:
-        //     case move_base_status.REJECTED:
-        //     case move_base_status.ABORTED:
-        //         new_status = Status::Pause;
-        //         break;
-        //     case move_base_status.SUCCEEDED:
-        //         new_status = Status::Idle;
-        //         break;
-        // }
     }
 
 } // namespace erc
