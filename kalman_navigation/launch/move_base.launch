@@ -25,13 +25,13 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 -->
 <launch>
   <arg name="perfect_odometry" default="false"/>
+  <param name="/use_sim_time" value="true"/>
 
   <node pkg="erc_map_publisher" type="map_publisher.py" name="map_transform_publisher" output="screen"/>
   <node pkg="fiducial_slam" type="ar_tag_fiducial_transform.py" name="ar_tag_bridge" output="screen"/>
-  <node pkg="kalman_navigation" type="zed_republisher.py" name="zed_repub" output="screen"/>
 
   <include file="$(find fiducial_slam)/launch/fiducial_slam.launch"/>  
-  <include file="$(find fiducial_slam)/launch/ar_detect_test.launch"/>  
+  <include file="$(find fiducial_slam)/launch/ar_detect_test.launch"/>   
 
   <group if="$(arg perfect_odometry)">
     <node pkg="kalman_navigation" type="perfect_odometry_publisher.py" respawn="false" name="perfect_odometry_publisher" output="screen"/>
@@ -40,7 +40,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
 
   <group unless="$(arg perfect_odometry)">
-    <node pkg="kalman_navigation" type="perfect_odometry_publisher.py" respawn="false" name="perfect_odometry_publisher" output="screen"/>
     <include file="$(find kalman_navigation)/launch/localization_zed.launch"/>
   </group>
   
@@ -49,15 +48,18 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
 
   <arg name="no_static_map" default="true"/>
-  <arg name="base_global_planner" default="navfn/NavfnROS"/>
-  <arg name="base_local_planner" default="dwa_local_planner/DWAPlannerROS"/>
+  <arg name="base_global_planner" default="global_planner/GlobalPlanner"/>
+  <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS"/>
   <!-- <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS"/> -->
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 
     <param name="base_global_planner" value="$(arg base_global_planner)"/>
     <param name="base_local_planner" value="$(arg base_local_planner)"/>  
-    <rosparam file="$(find kalman_navigation)/config/planner.yaml" command="load"/>
+        <rosparam command="load"
+              file="$(find kalman_navigation)/config/local_planner.yaml"/>
+    <rosparam command="load"
+              file="$(find kalman_navigation)/config/global_planner.yaml"/>
 
     <!-- observation sources located in costmap_common.yaml -->
     <rosparam file="$(find kalman_navigation)/config/costmap_common.yaml" command="load" ns="global_costmap" />
@@ -65,8 +67,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
     <!-- local costmap, needs size -->
     <rosparam file="$(find kalman_navigation)/config/costmap_local.yaml" command="load" ns="local_costmap" />
-    <param name="local_costmap/width" value="15.0"/>
-    <param name="local_costmap/height" value="15.0"/>
 
     <!-- static global costmap, static map provides size -->
     <rosparam file="$(find kalman_navigation)/config/costmap_global.yaml" command="load" ns="global_costmap"/>

@@ -29,7 +29,6 @@ class MapBroadcaster:
         self.tfBuffer = tf2_ros.Buffer()
         self.listener = tf2_ros.TransformListener(self.tfBuffer)
         self.broadcaster = tf2_ros.TransformBroadcaster()
-
         self.transform = self._identity_transform()
         self.update_transform_srv = rospy.Service(
             "/update_map_odom_transform", UpdateTransform, self.update_map_odom_transform)
@@ -41,6 +40,7 @@ class MapBroadcaster:
     def publish_map(self):
         self.transform.header.stamp = rospy.Time.now()
         self.broadcaster.sendTransform(self.transform)
+
 
     def update_transform(self, map_base):
         # ugly but should work xd
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     rospy.init_node('map_broadcaster')
     broadcaster = MapBroadcaster()
 
-    rate = rospy.Rate(20)
+    rate = rospy.Rate(30)
     while not rospy.is_shutdown():
         broadcaster.publish_map()
         rate.sleep()
