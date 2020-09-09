@@ -40,8 +40,6 @@ class ARTagsTransformer():
                 print(exc)
 
     def marker_id_ok(self, marker):
-        print(marker.id)
-        print(self.config)
         if marker.id is not None and marker.id in self.config:
             return True
         else:
