@@ -200,7 +200,7 @@ namespace erc
          /**
          * @brief Publishes the supervisor's currently detection threshold/
          */
-        ros::Publisher current_detection_thrshold_;
+        ros::Publisher current_detection_threshold_;
 
 
         std::string map_frame_;

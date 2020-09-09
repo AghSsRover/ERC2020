@@ -24,8 +24,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 )ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <launch>
-  <arg name="perfect_odometry" default="false"/>
-  <param name="/use_sim_time" value="true"/>
+  <arg name="perfect_odometry" default="true"/>
+  <!-- <param name="/use_sim_time" value="true"/> -->
 
   <node pkg="erc_map_publisher" type="map_publisher.py" name="map_transform_publisher" output="screen"/>
   <node pkg="fiducial_slam" type="ar_tag_fiducial_transform.py" name="ar_tag_bridge" output="screen"/>
