@@ -51,7 +51,7 @@ namespace erc
         status_pub_ = pnh.advertise<std_msgs::UInt8>("current_status", 10);
 
         current_goal_pub_ = pnh.advertise<geometry_msgs::PoseStamped>("current_goal", 1, true);
-        current_detection_threshold_ = pnh.advertise<std_msgs::UInt8>("current_detecion_threshold",1,true);
+        current_detection_threshold_ = pnh.advertise<std_msgs::UInt8>("/current_detecion_threshold",1,true);
 
         last_detection_point_ = std::chrono::steady_clock::now(); // init
         ROS_INFO_STREAM("Can transform: " << buffer_->canTransform("base_link", map_frame_, ros::Time(0)));
