@@ -1,43 +1,101 @@
-# http://wiki.ros.org/base_local_planner#Parameters
-TrajectoryPlannerROS:
 
-  # Robot configuration
-  acc_lim_x: 1.0
-  acc_lim_theta: 2.0
-  max_vel_x: 2.0 #0.5
-  min_vel_x: 0.1
-  max_vel_theta: 0.5
-  min_vel_theta: -0.5
-  min_in_place_vel_theta: 0.4
-  escape_vel: -0.1
-  holonomic_robot: false
 
-  # Goal tolerance
-  yaw_goal_tolerance: 6.29
-  xy_goal_tolerance: 0.4
-  latch_xy_goal_tolerance: true
 
-  # Forward simulation
-  sim_time: 3.0
-  sim_granularity: 0.05
-  angular_sim_granularity: 0.025
-  vx_samples: 3
-  vtheta_samples: 20
+  DWAPlannerROS:
+    holonomic_robot: false
+    
+    xy_goal_tolerance: 0.4
+    yaw_goal_tolerance: 7.0
 
-  # Trajectory scoring
-  meter_scoring: true
-  pdist_scale: 0.5
-  gdist_scale: 0.3
-  occdist_scale: 0.005
-  heading_lookahead: 0.325
-  heading_scoring: false
-  heading_scoring_timestep: 0.8
-  dwa: true
-  publish_cost_grid_pc: false
-  global_frame_id: map
+    acc_lim_theta: 1.0
 
-  # Oscillation
-  oscillation_reset_dist: 0.05
+    acc_lim_x: 2.0
+    acc_lim_y: 0.0
 
-  # Global plan
-  prune_plan: true
+
+    # angular_sim_granularity: 0.1
+    # forward_point_distance: 0.0
+
+    # goal_distance_bias: 96.0
+    # max_scaling_factor: 0.2
+
+    max_vel_trans: 1.0  
+    min_vel_trans: 0.1
+
+    max_vel_x: 0.5
+    max_vel_y: 0.0
+
+    min_vel_x: -0.15
+    min_vel_y: 0.0
+
+    min_vel_theta: 0.4
+    max_vel_theta: 0.5
+    
+
+
+
+    # occdist_scale: 0.01
+    # oscillation_reset_angle: 0.2
+    # oscillation_reset_dist: 0.05
+    # path_distance_bias: 24.0
+    # prune_plan: true
+    # publish_cost_grid: true
+    # restore_defaults: false
+    # scaling_speed: 0.25
+    # sim_granularity: 0.05
+    # sim_time: 1.7
+    # stop_time_buffer: 0.2
+    # theta_stopped_vel: 0.1
+    # trans_stopped_vel: 0.1
+    # twirling_scale: 0.0
+    use_dwa: true
+    # vth_samples: 45
+    # vx_samples: 19
+    # vy_samples: 1
+  
+    # forward_point_distance: 0
+
+
+    # http://wiki.ros.org/base_local_planner#Parameters
+# TrajectoryPlannerROS:
+
+#   # Robot configuration
+#   acc_lim_x: 1.0
+#   acc_lim_theta: 2.0
+#   max_vel_x: 2.0 #0.5
+#   min_vel_x: 0.1
+#   max_vel_theta: 0.5
+#   min_vel_theta: -0.5
+#   min_in_place_vel_theta: 0.4
+#   escape_vel: -0.1
+#   holonomic_robot: false
+
+#   # Goal tolerance
+#   yaw_goal_tolerance: 6.29
+#   xy_goal_tolerance: 0.4
+#   latch_xy_goal_tolerance: true
+
+#   # Forward simulation
+#   sim_time: 3.0
+#   sim_granularity: 0.05
+#   angular_sim_granularity: 0.025
+#   vx_samples: 3
+#   vtheta_samples: 20
+
+#   # Trajectory scoring
+#   meter_scoring: true
+#   pdist_scale: 0.5
+#   gdist_scale: 0.3
+#   occdist_scale: 0.005
+#   heading_lookahead: 0.325
+#   heading_scoring: false
+#   heading_scoring_timestep: 0.8
+#   dwa: true
+#   publish_cost_grid_pc: false
+#   global_frame_id: map
+
+#   # Oscillation
+#   oscillation_reset_dist: 0.05
+
+#   # Global plan
+#   prune_plan: true

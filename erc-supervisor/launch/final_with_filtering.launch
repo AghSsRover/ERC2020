@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find kalman_navigation)/launch/final_with_filtering.launch" />
+    <node pkg="erc_supervisor" type="erc_supervisor" name="erc_supervisor" output="screen">
+        <rosparam command="load" file="$(find erc_supervisor)/cfg/ErcSupervisor.yaml"/>
+    </node>
+</launch>

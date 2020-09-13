@@ -7,7 +7,6 @@ import tf2_ros
 import tf.transformations
 
 from erc_map_publisher.srv import UpdateTransform
-
 from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
 
 
@@ -35,13 +34,13 @@ class MapBroadcaster:
 
     def update_map_odom_transform(self, req):
         self.update_transform(req.pose)
-        return ["map -> odom transform updated", True]
+        rospy.loginfo("update map req")
+        rospy.sleep(1.0)
+        return True
 
     def publish_map(self):
         self.transform.header.stamp = rospy.Time.now()
         self.broadcaster.sendTransform(self.transform)
-
-
     def update_transform(self, map_base):
         # ugly but should work xd
         t = TransformStamped()
@@ -51,13 +50,14 @@ class MapBroadcaster:
         try:
             base_odom = self.tfBuffer.lookup_transform(self.base_frame,
                                                        self.odom_frame,
-                                                       rospy.Duration(0))
+                                                       rospy.Duration(0),
+                                                       )
 
         except (tf2_ros.LookupException,
                 tf2_ros.ConnectivityException,
                 tf2_ros.ExtrapolationException):
-
             return
+
         self.transform = self._chain_transforms(t, base_odom)
         return
 

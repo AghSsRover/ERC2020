@@ -1,0 +1,115 @@
+<launch>
+<!-- REMEMBER TO KEEP IT CONSISTENT WITH fiducial_slam/cfg/map.txt  -->
+<!-- #TODO automate above -->
+
+<!-- CURRENTLY tag_id == 1 doesn't  work as it spawns tag with id 3. will fix it  -->
+<!-- all other tags from range 2.15 inclusive can be added -->
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="1"/>
+      <arg name="object_x" default="7.31"/>
+      <arg name="object_y" default="0.0"/>
+      <arg name="object_z" default="1.1"/>
+</include>
+
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="2"/>
+      <arg name="object_x" default="7.19"/>
+      <arg name="object_y" default="7.55"/>
+      <arg name="object_z" default="1.5"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="3"/>
+      <arg name="object_x" default="18.85"/>
+      <arg name="object_y" default="-3.59"/>
+      <arg name="object_z" default="1.20"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="4"/>
+      <arg name="object_x" default="33.77"/>
+      <arg name="object_y" default="6.41"/>
+      <arg name="object_z" default="0.90"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="5"/>
+      <arg name="object_x" default="13.22"/>
+      <arg name="object_y" default="-13.61"/>
+      <arg name="object_z" default="1.5"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="6"/>
+      <arg name="object_x" default="21.01"/>
+      <arg name="object_y" default="13.21"/>
+      <arg name="object_z" default="1.5"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="7"/>
+      <arg name="object_x" default="20.96"/>
+      <arg name="object_y" default="3.36"/>
+      <arg name="object_z" default="1.06 "/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="8"/>
+      <arg name="object_x" default="20.40"/>
+      <arg name="object_y" default="-19.41"/>
+      <arg name="object_z" default="1.3"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="9"/>
+      <arg name="object_x" default="14.77"/>
+      <arg name="object_y" default="6.89"/>
+      <arg name="object_z" default="1.5"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="10"/>
+      <arg name="object_x" default="22.46"/>
+      <arg name="object_y" default="-10.36"/>
+      <arg name="object_z" default="1.5"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="11"/>
+      <arg name="object_x" default="31.56"/>
+      <arg name="object_y" default="-18.81"/>
+      <arg name="object_z" default="1.3"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="12"/>
+      <arg name="object_x" default="29.92"/>
+      <arg name="object_y" default="11.44"/>
+      <arg name="object_z" default="1.0"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="13"/>
+      <arg name="object_x" default="32.79"/>
+      <arg name="object_y" default="-6.79"/>
+      <arg name="object_z" default="1.0"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="14"/>
+      <arg name="object_x" default="2.04"/>
+      <arg name="object_y" default="-12.02"/>
+      <arg name="object_z" default="1.0"/>
+</include>
+
+<include file="$(find ar_tags_spawner)/launch/spawn_artag.launch">
+      <arg name="tag_id" default="15"/>
+      <arg name="object_x" default="7.63"/>
+      <arg name="object_y" default="13.24"/>
+      <arg name="object_z" default="1.3"/>
+</include>
+
+
+</launch>

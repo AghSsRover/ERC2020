@@ -30,13 +30,14 @@
  */
 
 #include <fiducial_slam/helpers.h>
-
 #include <assert.h>
 #include <signal.h>
 #include <sys/time.h>
 #include <unistd.h>
 
 #include <ros/ros.h>
+
+
 #include <tf/transform_datatypes.h>
 #include <tf2/LinearMath/Transform.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -50,6 +51,7 @@
 #include "fiducial_msgs/FiducialTransform.h"
 #include "fiducial_msgs/FiducialTransformArray.h"
 
+#include "fiducial_msgs/FiducialTransformSrv.h"
 #include "fiducial_slam/map.h"
 
 #include <opencv2/calib3d.hpp>
@@ -64,25 +66,28 @@ using namespace cv;
 class FiducialSlam {
 private:
     ros::Subscriber ft_sub;
-
     ros::Subscriber verticesSub;
     ros::Subscriber cameraInfoSub;
     ros::Publisher ftPub;
+    ros::ServiceServer fiducial_transforms_;
 
     bool use_fiducial_area_as_weight;
     double weighting_scale;
 
-    void transformCallback(const fiducial_msgs::FiducialTransformArray::ConstPtr &msg);
+    bool transformCallback(fiducial_msgs::FiducialTransformSrv::Request &req,
+                        fiducial_msgs::FiducialTransformSrv::Response &resp);
 
 public:
     Map fiducialMap;
     FiducialSlam(ros::NodeHandle &nh);
 };
 
-void FiducialSlam::transformCallback(const fiducial_msgs::FiducialTransformArray::ConstPtr &msg) {
+bool FiducialSlam::transformCallback(fiducial_msgs::FiducialTransformSrv::Request &req,
+                                    fiducial_msgs::FiducialTransformSrv::Response &resp) {
+                                
     vector<Observation> observations;
-    for (size_t i = 0; i < msg->transforms.size(); i++) {
-        const fiducial_msgs::FiducialTransform &ft = msg->transforms[i];
+    for (size_t i = 0; i < req.transforms.transforms.size(); i++) {
+        const fiducial_msgs::FiducialTransform &ft = req.transforms.transforms[i];
 
         tf2::Vector3 tvec(ft.transform.translation.x, ft.transform.translation.y,
                           ft.transform.translation.z);
@@ -99,11 +104,19 @@ void FiducialSlam::transformCallback(const fiducial_msgs::FiducialTransformArray
 
         Observation obs(ft.fiducial_id, tf2::Stamped<TransformWithVariance>(
                                             TransformWithVariance(ft.transform, variance),
-                                            msg->header.stamp, msg->header.frame_id));
+                                            req.transforms.header.stamp, req.transforms.header.frame_id));
         observations.push_back(obs);
     }
 
-    fiducialMap.update(observations, msg->header.stamp);
+    bool is_translation_perfect = req.transforms.translation_perfect;
+    geometry_msgs::Vector3 translation = req.transforms.translation;
+
+    bool success = fiducialMap.update(observations, req.transforms.header.stamp, 
+                         is_translation_perfect, translation);
+    
+    ROS_INFO_STREAM("fiducial_slam updating map, success" << success);
+    resp.success = success;
+    return true;
 }
 
 FiducialSlam::FiducialSlam(ros::NodeHandle &nh) : fiducialMap(nh) {
@@ -124,10 +137,13 @@ FiducialSlam::FiducialSlam(ros::NodeHandle &nh) : fiducialMap(nh) {
         nh.param<double>("fiducial_len", fiducialLen, 0.14);
         nh.param<double>("pose_error_theshold", errorThreshold, 1.0);
 
-        ftPub = ros::Publisher(
-            nh.advertise<fiducial_msgs::FiducialTransformArray>("/fiducial_transforms", 1));
+        // ftPub = ros::Publisher(
+        //     nh.advertise<fiducial_msgs::FiducialTransformArray>("/fiducial_transforms", 1));
     } else {
-        ft_sub = nh.subscribe("/fiducial_transforms", 1, &FiducialSlam::transformCallback, this);
+        fiducial_transforms_ = nh.advertiseService("/fiducial_transforms", &FiducialSlam::transformCallback, this);
+        // ft_sub = nh.subscribe("/fiducial_transforms", 1, &FiducialSlam::transformCallback, this);
+        // ft_sub = nh.subscribe("/fiducial_transforms", 1, &FiducialSlam::transformCallback, this);
+
     }
 
     ROS_INFO("Fiducial Slam ready");

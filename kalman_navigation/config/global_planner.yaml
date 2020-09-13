@@ -10,11 +10,13 @@ max_planning_retries: 5
 # Planner plugins
 base_global_planner: global_planner/GlobalPlanner
 base_local_planner: base_local_planner/TrajectoryPlannerROS
-
 # Recovery behavior parameters
+
 recovery_behavior_enabled: true
-clearing_rotation_allowed: true
-conservative_reset_dist: 2.0
+clearing_rotation_allowed: false
+conservative_reset_dist: 10
+
+
 
 GlobalPlanner:
   allow_unknown: true
@@ -30,3 +32,4 @@ GlobalPlanner:
   publish_potential: true
   orientation_mode: 0
   orientation_window_size: 1
+  global_frame_id: map

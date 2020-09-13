@@ -55,7 +55,8 @@
   <build_export_depend>rospy</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
-
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>actionlib_msgs</depend>
@@ -64,6 +65,9 @@
   <depend>tf2_ros</depend>
   <depend>tf2</depend>
   <depend>tf2_geometry_msgs</depend>
+  <depend>rotator</depend>
+  <depend>fiducial_slam</depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

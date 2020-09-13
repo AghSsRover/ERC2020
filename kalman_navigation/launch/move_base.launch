@@ -24,7 +24,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 )ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <launch>
-  <arg name="perfect_odometry" default="false"/>
+  <arg name="perfect_odometry" default="true"/>
+  <!-- <param name="/use_sim_time" value="true"/> -->
 
   <node pkg="erc_map_publisher" type="map_publisher.py" name="map_transform_publisher" output="screen"/>
   <node pkg="fiducial_slam" type="ar_tag_fiducial_transform.py" name="ar_tag_bridge" output="screen"/>
@@ -33,8 +34,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
   <include file="$(find fiducial_slam)/launch/ar_detect_test.launch"/>   
 
   <group if="$(arg perfect_odometry)">
-    <node pkg="kalman_navigation" type="perfect_odometry_publisher.py" respawn="false" name="perfect_odometry_publisher" output="screen"/>
-    <include file="$(find kalman_navigation)/launch/localization_perfect.launch"/>
+    <node pkg="kalman_navigation" type="wheel_repub.py" respawn="false" name="wheel_repub" output="screen"/>
+    <include file="$(find kalman_navigation)/launch/localization.launch"/>
   </group>
 
 
@@ -48,7 +49,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
   <arg name="no_static_map" default="true"/>
   <arg name="base_global_planner" default="global_planner/GlobalPlanner"/>
-  <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS"/>
+  <arg name="base_local_planner" default="dwa_local_planner/DWAPlannerROS"/>
   <!-- <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS"/> -->
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -75,5 +76,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
     <param name="global_costmap/width" value="200.0" if="$(arg no_static_map)"/>
     <param name="global_costmap/height" value="200.0" if="$(arg no_static_map)"/>
   </node>
+
+
+  <include file="$(find rotator)/launch/rotation.launch" />
+  <include file="$(find img_saver)/launch/img_saver.launch" />
 
 </launch>

@@ -1,0 +1,5 @@
+float32 angle
+float32 timeout
+---
+bool success
+---

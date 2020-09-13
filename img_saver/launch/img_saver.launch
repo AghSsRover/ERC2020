@@ -1,0 +1,8 @@
+<launch>
+
+<node pkg="img_saver" type="image_saver.py" name="img_saver">
+    <param name="camera_topic1" value="/zed2/left/image_rect_color/compressed" />
+    <param name="camera_topic2" value="/camera/image_raw/compressed"/>
+</node>
+
+</launch>

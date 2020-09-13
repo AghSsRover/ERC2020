@@ -1,0 +1,4 @@
+int32 id
+---
+bool result
+string status_msg

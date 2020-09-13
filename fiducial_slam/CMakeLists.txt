@@ -25,12 +25,15 @@ find_package(OpenCV REQUIRED)
 add_service_files(
   FILES
   AddFiducial.srv
+  UpdatePoseFromTrans.srv
+  UpdatePoseFromRot.srv
 )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
   std_msgs
+  geometry_msgs
 )
 
 ###########

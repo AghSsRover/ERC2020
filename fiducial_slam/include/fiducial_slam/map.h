@@ -34,6 +34,8 @@
 #include <ros/ros.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Transform.h>
+#include <math.h>
+
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
@@ -54,6 +56,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include <std_srvs/Empty.h>
+
 #include <fiducial_slam/AddFiducial.h>
 
 #include <fiducial_slam/transform_with_variance.h>
@@ -113,6 +116,7 @@ public:
     std::string baseFrame;
 
     ros::ServiceClient transformUpdater_;
+    ros::ServiceServer tagsToTransform_;
     
     double future_date_transforms;
     bool publish_6dof_pose;
@@ -138,10 +142,15 @@ public:
 
     Map(ros::NodeHandle &nh);
     void update();
-    void update(std::vector<Observation> &obs, const ros::Time &time);
+    bool update(std::vector<Observation> &obs, const ros::Time &time,
+                bool is_translation_perfect, geometry_msgs::Vector3 &translation);
+
     void autoInit(const std::vector<Observation> &obs, const ros::Time &time);
-    int updatePose(std::vector<Observation> &obs, const ros::Time &time,
-                   tf2::Stamped<TransformWithVariance> &cameraPose);
+   
+    bool updatePoseFromOrientation(std::vector<Observation> &obs, const ros::Time &time);
+    bool updatePoseFromTranslation(std::vector<Observation> &obs, const ros::Time &time,
+                    geometry_msgs::Vector3 &translation);
+    
     void updateMap(const std::vector<Observation> &obs, const ros::Time &time,
                    const tf2::Stamped<TransformWithVariance> &cameraPose);
     void handleAddFiducial(const std::vector<Observation> &obs);

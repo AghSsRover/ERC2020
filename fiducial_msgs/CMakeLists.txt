@@ -23,6 +23,7 @@ add_message_files(
 add_service_files(
   FILES
   InitializeMap.srv
+  FiducialTransformSrv.srv
 )
 
 generate_messages(

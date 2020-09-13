@@ -1,13 +1,16 @@
 
 <launch>
 	<arg name="marker_size" default="14.6" />
-	<arg name="max_new_marker_error" default="0.08" />
+	<arg name="max_new_marker_error" default="0.1" />
 	<arg name="max_track_error" default="0.2" />
-	<arg name="cam_image_topic" default="/zed2/right/image_rect_color" />
-	<arg name="cam_info_topic" default="/zed2/right/camera_info" />
-	<arg name="output_frame" default="zed2_right_camera_optical_frame" />
+	<arg name="cam_image_topic" default="/zed2/left_raw/image_raw_color" />
+	<arg name="cam_info_topic" default="/zed2/left_raw/camera_info" />
+	
 
-	<node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen">
+	<arg name="output_frame" default="zed2_left_camera_optical_frame" />
+
+	<node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" 
+				output="screen" > 
 		<param name="marker_size"           type="double" value="$(arg marker_size)" />
 		<param name="max_new_marker_error"  type="double" value="$(arg max_new_marker_error)" />
 		<param name="max_track_error"       type="double" value="$(arg max_track_error)" />

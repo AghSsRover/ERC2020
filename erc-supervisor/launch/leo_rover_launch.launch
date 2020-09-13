@@ -4,5 +4,4 @@
     <node pkg="erc_supervisor" type="erc_supervisor" name="erc_supervisor" output="screen">
         <rosparam command="load" file="$(find erc_supervisor)/cfg/ErcSupervisor.yaml"/>
     </node> -->
-    
 </launch>

@@ -15,4 +15,4 @@ move_base_action: move_base
 # This should be the map's frame.
 # This way, if a goal is paused and resumed later,
 # it does not move with the robot.
-map_frame: odom
+map_frame: map
