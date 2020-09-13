@@ -7,7 +7,12 @@ import rospkg
 
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from fiducial_msgs.srv import FiducialTransformSrv, FiducialTransformSrvRequest 
-from fiducial_msgs.msg import FiducialTransform, FiducialTransformArray
+from fiducial_msgs.msg import (
+    FiducialTransform, 
+    FiducialTransformArray,
+    FiducialDistance
+)
+from std_msgs.msg import Header
 from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
 
 from fiducial_slam.srv import (
@@ -55,6 +60,8 @@ class ARTagsTransformer():
 #             "/update_pose_perfect_translation",
 #             UpdatePoseFromTrans, self.update_pose_perfect_translation_handle)
 
+        self.observed_tags_pub = rospy.Publisher("/observed_landmarks", FiducialDistance, queue_size=10)
+
         self.update_pose_from_rot_srv = rospy.Service(
             "/update_pose_from_rotation", UpdatePoseFromRot, self.update_pose_perfect_orientation_handle)
 
@@ -63,7 +70,7 @@ class ARTagsTransformer():
 
         self.config = None
         # TODO Parametrize it
-        self.update_pose_max_wait = 5
+        self.update_pose_max_wait = 3.5
 
         # some stupid lock to avoid updating pose on two different ways simultaneously
         self.lock = False
@@ -94,8 +101,13 @@ class ARTagsTransformer():
 
         tag_pose = self.tfBuffer.transform(t, "base_link")
 
-
-        if 0.2 < tag_pose.pose.position.x < 8.0:
+        distance = (tag_pose.pose.position.x**2 + tag_pose.pose.position.y**2)**0.5
+        if 0.2 < distance < 8.0:
+            header = Header()
+            header.frame_id = "base_link"
+            header.stamp = rospy.Time.now()
+            observed_fiducial = FiducialDistance(distance=distance, id=marker.id, header=header)
+            self.observed_tags_pub.publish(observed_fiducial)
             return True
         else:
             return False
@@ -109,6 +121,7 @@ class ARTagsTransformer():
         if len(markers) > 0:
             # print(markers)
             self.detection_available_publisher.publish(Bool(True))
+
 
     # assume that rotation from map to base_link is without any error
     def update_pose_perfect_translation_handle(self, req):

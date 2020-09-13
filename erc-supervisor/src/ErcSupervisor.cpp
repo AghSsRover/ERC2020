@@ -84,28 +84,21 @@ namespace erc
             GetPosedStamped(12.19, 8.73),
         }};
         ErcSupervisor::GoalsQueue queue2{std::vector<geometry_msgs::PoseStamped>{
-            GetPosedStamped(1,1),
-            GetPosedStamped(4.2,23.2),
-            GetPosedStamped(1,1),
-            GetPosedStamped(1,1),
+            GetPosedStamped(18.01, 6.00),
+            GetPosedStamped(25.04, 4.36),
         }};
         ErcSupervisor::GoalsQueue queue3{std::vector<geometry_msgs::PoseStamped>{
-            GetPosedStamped(1,1),
-            GetPosedStamped(4.2,23.2),
-            GetPosedStamped(1,1),
-            GetPosedStamped(1,1),
+            GetPosedStamped(29.0 , 4.0 ),
+            GetPosedStamped(28.62 , -6.17),
         }};
         ErcSupervisor::GoalsQueue queue4{std::vector<geometry_msgs::PoseStamped>{
-            GetPosedStamped(1,1),
-            GetPosedStamped(4.2,23.2),
-            GetPosedStamped(1,1),
-            GetPosedStamped(1,1),
+            GetPosedStamped(19.26, -6.9),
+            GetPosedStamped(16.53, -13.0),
+            GetPosedStamped(11.63 , -16.85),
         }};
         ErcSupervisor::GoalsQueue queue5{std::vector<geometry_msgs::PoseStamped>{
-            GetPosedStamped(1,1),
-            GetPosedStamped(4.2,23.2),
-            GetPosedStamped(1,1),
-            GetPosedStamped(1,1),
+            GetPosedStamped(20.80, -15.52),
+            GetPosedStamped(27.48, -13.65),
         }};
 
         ret[1] = queue1;
@@ -135,7 +128,7 @@ namespace erc
         buffer_ = std::make_unique<tf2_ros::Buffer>();
         tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*buffer_);
 
-        // goals = GetGoalsQueue(); //TODO: !
+        goals = GetGoalsQueue(); //TODO: !
 
         last_detection_point_ = std::chrono::steady_clock::now();
 
@@ -249,21 +242,26 @@ namespace erc
                 {
                     case move_base_status.SUCCEEDED:
                     {
+                        ROS_INFO_STREAM("MB SUCCEEDED");
                         if (current_queue != -1)
                         {
-                            auto queue = goals[current_queue];
+                            auto& queue = goals[current_queue];
                             if (queue.HasNext())
                             {
+                                ROS_INFO_STREAM("popping next goal");
                                 CurrentGoal(queue.GetNext());
+                                StartGoal();
                             }
                             else
                             {
+                                ROS_INFO_STREAM("no more goals, seeking for translation");
                                 LaunchSeekTranslation();
                             }
-
                         }
                         else
                         {
+                            ROS_INFO_STREAM("no current queue");
+
                             LaunchSeekTranslation();
                         }
                     }
@@ -489,6 +487,7 @@ namespace erc
         {
             el.second.Reset();
         }
+        ROS_INFO_STREAM("Reseted goals");
         ResumeCostMap();
     }
 
@@ -529,15 +528,17 @@ namespace erc
             }
             else
             {
-                id = req.id;
-                auto find = goals.find(id);
-
+                auto find = goals.find(req.id);
+                
                 if(find!=goals.end())
                 {
                     res.result = true;
                     res.status_msg = "New queue id";
                     CurrentGoal(find->second.goals[0]);
+                    id = req.id;
                 }
+
+
             }
         }
         else

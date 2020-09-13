@@ -72,22 +72,47 @@ namespace erc
             UserRotate // Rotation invoked by user
         };
 
-        struct GoalsQueue
+        class GoalsQueue
         {
-            GoalsQueue() = default;
+        public:
+            GoalsQueue()
+            {
+                ROS_INFO_STREAM("INIT");
+                current = 0;
+            }
             GoalsQueue(std::vector<geometry_msgs::PoseStamped>  goals)
             : goals(goals)
-            {}
+            {
+                ROS_INFO_STREAM("INIT");
+                current = 0;
+            }
 
             virtual ~GoalsQueue() = default;
 
-            size_t Size() const noexcept {return goals.size();}
-            size_t HasNext() const noexcept {return current +1 < goals.size();}
-            geometry_msgs::PoseStamped GetNext() noexcept {auto ret = goals.at(current); current+=1; return ret;}
-            void Reset() {current = 0;}
+            size_t Size()   {
+                return goals.size();
+                }
+            bool HasNext()   {
+                ROS_INFO_STREAM("current" << current); 
+                return ((current +1) < goals.size());
+            }
+
+            geometry_msgs::PoseStamped GetNext()  {
+                this->current = (current+1); 
+                auto ret = goals.at(current); 
+                ROS_INFO_STREAM("current (getnext) " << current);
+                ROS_INFO_STREAM("next goal x " <<ret.pose.position.x); 
+
+                return ret;
+            }
+            void Reset() 
+            {
+                ROS_INFO_STREAM("reset involved ") ; 
+                current = 0;
+            }
 
             std::vector<geometry_msgs::PoseStamped> goals;
-            size_t current = 0;
+            int current;
         };
 
         /**

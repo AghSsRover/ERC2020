@@ -24,11 +24,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 )ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <launch>
+ <remap from="/zed2/point_cloud/cloud_registered" to= "/lel"/>
   <arg name="perfect_odometry" default="false"/>
-  <!-- <param name="/use_sim_time" value="true"/> -->
 
   <node pkg="erc_map_publisher" type="map_publisher.py" name="map_transform_publisher" output="screen"/>
   <node pkg="fiducial_slam" type="ar_tag_fiducial_transform.py" name="ar_tag_bridge" output="screen"/>
+  <node pkg="erc_supervisor" type="reset_costmap.py" name="reset_costmap" output="screen"></node>
 
   <include file="$(find fiducial_slam)/launch/fiducial_slam.launch"/>  
   <include file="$(find fiducial_slam)/launch/ar_detect_test.launch"/>   
@@ -80,5 +81,5 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
 
   <include file="$(find rotator)/launch/rotation.launch" />
   <include file="$(find img_saver)/launch/img_saver.launch" />
-  
+
 </launch>

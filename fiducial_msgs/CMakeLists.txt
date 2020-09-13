@@ -18,6 +18,7 @@ add_message_files(
    FiducialTransformArray.msg
    FiducialMapEntry.msg
    FiducialMapEntryArray.msg
+   FiducialDistance.msg
 )
 
 add_service_files(

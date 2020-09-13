@@ -1,0 +1,53 @@
+<launch>
+
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="1.5"/>
+  <arg name="R" default="0.0"/>
+  <arg name="P" default="0.0"/>
+  <arg name="Y" default="0.0"/>
+
+  <arg name="model" default="$(find leo_description)/urdf/leo.urdf.xacro"/>
+  
+  <arg name="fixed" default="false"/>
+  <arg name="robot_ns" default="/"/>
+  <arg name="model_name" default="leo"/>
+
+  <group ns="$(arg robot_ns)">
+  
+    <param unless="$(eval robot_ns == '/')" 
+           name="tf_prefix"
+           value="$(arg robot_ns)"/>
+
+    <param name="robot_description" command="xacro $(arg model) 
+      fixed:=$(arg fixed)
+      robot_ns:=$(arg robot_ns)
+      rockers_fixed:=false
+    "/>
+
+    <rosparam command="load" file="$(find leo_gazebo)/config/pid_gains.yaml"/>
+
+    <node name="urdf_spawner"
+          pkg="gazebo_ros"
+          type="spawn_model"
+          respawn="false"
+          args="-urdf 
+      -x $(arg x) -y $(arg y) -z $(arg z)
+      -R $(arg R) -P $(arg P) -Y $(arg Y)
+      -model $(arg model_name) 
+      -param robot_description
+    "/>
+
+    <node name="zed2_imu_transform_publisher"
+          pkg="rostopic"
+          type="rostopic"
+          args="pub zed2/left_cam_imu_transform geometry_msgs/Transform --latch
+                --file=$(find leo_gazebo)/config/zed2_left_cam_imu_transform.yaml"/>
+
+    <node name="zed2_imu_transform_broadcaster"
+          pkg="leo_gazebo"
+          type="zed2_imu_transform_broadcaster"/>
+
+  </group>
+
+</launch>
